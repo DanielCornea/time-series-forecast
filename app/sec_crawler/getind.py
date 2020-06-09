@@ -7,13 +7,18 @@ import re
 
 
 
-def get_roa(company):
+def get_roa(company, latest=True):
     """ 
-        Params: The stock ticker of a company 
+        Params: 
+                - The stock ticker of a company
+                - latest, boolean,  True for the last filling
+                                    False for the previous filling
         Returns:  the Return of Assets Indicator of a company
         This function is to be used as a template for any other functions
     """
     try : 
+        # checking for the latest parameter
+     
         # total liabilities encoding (bear in mind Total Liabilities == Total Assets)
         l_indicator = "us-gaap:LiabilitiesAndStockholdersEquity"
         # net income encoding 
@@ -21,7 +26,10 @@ def get_roa(company):
         # encoding if the above is not found
         err_indicator = "us-gaap:NetIncomeLoss"
         # getting the link of the XBRL file 
-        link = sf.get_xbrl_link(sf.get_cik(company))
+        if (latest == False) :
+            link = sf.get_prev_xbrl_link(sf.get_cik(company))
+        else: 
+            link = sf.get_xbrl_link(sf.get_cik(company))
         
         xbrl_file = sf.get_xbrl_file(link)
         xbrl_year_end = sf.get_sec_year_end(xbrl_file)
@@ -45,19 +53,29 @@ def get_roa(company):
             # print('assets:  ', assets)
             revenues = re.search(find, revenues).group(0)
             # print('revenues:  ', revenues)
-        return (company, assets, revenues, int(assets)/int(revenues))
+        return (company, assets, revenues, int(assets)/int(revenues), latest)
     except : 
         print (str(company) + ": ERROR")
-        return ('Company not found', 0, 0, 0)
+        return ('Company not found', 0, 0, 0, False)
 
-
-symbol = 'DIS'
+#############################################################################################################
+################################################# Testing ###################################################
+#############################################################################################################
+symbol = 'PFE'
 
 tupple = get_roa(symbol)
 print('Company: ', tupple[0])
 print('Assets: ', tupple[1])
 print('Revenues: ', tupple[2])
 print('ROA: ', tupple[3])
+print('latest: ', tupple[4])
+print('Latest is False here')
+tupple = get_roa(symbol, latest=False)
+print('Company: ', tupple[0])
+print('Assets: ', tupple[1])
+print('Revenues: ', tupple[2])
+print('ROA: ', tupple[3])
+print('latest: ', tupple[4])
 
 
 

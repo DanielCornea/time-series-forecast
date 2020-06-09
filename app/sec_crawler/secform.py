@@ -77,6 +77,25 @@ def get_xbrl_link(CIK):
     except: 
         get_error_link(CIK)
 
+def get_prev_xbrl_link(CIK): 
+    # get the first xml foud, in case the first xml is not good get the one with the indicator 
+    try :
+        # get the first search page link 
+            # def the search link for the page where XBRL link should be searched for
+        URL_search = 'https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK={}&type=10-K&dateb=&owner=exclude&count=10'
+            # get the link for the 10-K form 
+        soup = BeautifulSoup(requests.get(URL_search.format(CIK)).text, 'html.parser')
+
+        # get the second link 
+            # get the link for the xbrl file 
+        URL_search = 'https://www.sec.gov' + soup.find_all(text = "10-K")[1].parent.find_next('a')['href']
+        soup = BeautifulSoup(requests.get(URL_search).text, 'html.parser')
+        table  = soup.find_all("a", {"href": re.compile('.xml', re.IGNORECASE | re.MULTILINE)})
+        return('https://www.sec.gov' + table[0]['href'])
+
+    except: 
+        get_error_link(CIK)
+
 # return the file in xml with lxml parsing 
 def get_xbrl_file(xbrl_link):
     return BeautifulSoup(requests.get(xbrl_link).text, 'lxml')
@@ -111,46 +130,8 @@ def get_num_indicator(ind_name, ind_lperiod, xbrl_file):
     except: 
         return None
         
-# company_names = ['AYI', 'A', 'BSX', 'BHF', 'CHD', 'CI', 'XRAY', 'DVN', 'DWDP', 'DPS', 'GGP', 'HRS', 'ITW', 'INTC', 'KEY', 'LLL', 'LUK', 'KORS', 'MCHP', 'NCLH', 'PRGO', 'RSG', 'COL', 'CLX', 'DIS', 'TMK', 'VRSN', 'WYN', 'XRX',
-# 'XYL']
 
 
-# CIK = get_cik(company_name)
-# print('get_cik: '+  CIK)
-# xbrl_link = get_xbrl_link(get_cik(company_name))
-# print('xbrl_link_sec_form: '+  xbrl_link)
-# xbrl_file = get_xbrl_file(get_error_link(CIK))
-# year_end = get_sec_year_end(xbrl_file)
-# print('Year End: ' +  year_end)
-# indicator_lperiod = get_indicator_lperiod(year_end, "us-gaap:NetIncomeLoss", xbrl_file)
-# print('Indicator lperiod: ' + str(indicator_lperiod))
-# print('NUM_indicator: ' + get_num_indicator("us-gaap:NetIncomeLoss",  indicator_lperiod, xbrl_file))
-
-
-# xbrl_file = get_xbrl_file(xbrl_link)
-
-# # f = open('aes.xml',"w+")
-# # f.write(str(xbrl_file))
-# # f.close()
-
-
-# year_end = get_sec_year_end(xbrl_file, CIK)
-# if (year_end == None): 
-#     xbrl_file = get_xbrl_file(get_error_link(CIK))
-#     year_end = str(xbrl_file.find(name = re.compile('dei:DocumentPeriodEndDate', re.IGNORECASE | re.MULTILINE)).text)
-
-#         # year_end = xbrl_file.find(name = re.compile('dei:DocumentPeriodEndDate', re.IGNORECASE | re.MULTILINE))
-#         # return str(year_end.text)
-
-
-# print('get_cik: '+  CIK)
-# print('xbrl_link: '+  xbrl_link)
-# print('Year End: ' +  year_end)
-# indicator_lperiod = get_indicator_lperiod(year_end, "us-gaap:NetIncomeLoss", xbrl_file)
-
-# print('Indicator lperiod: ' + str(indicator_lperiod))
-
-# print('NUM_indicator: ' + get_num_indicator("us-gaap:NetIncomeLoss",  indicator_lperiod, xbrl_file))
 
 
 if __name__ == "__main___": 
