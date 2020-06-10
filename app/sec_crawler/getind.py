@@ -25,6 +25,9 @@ def get_roa(company, latest=True):
         r_indicator = "us-gaap:ProfitLoss"
         # encoding if the above is not found
         err_indicator = "us-gaap:NetIncomeLoss"
+        # net cash flow encoding 
+        net_cash_flow_indicator = "us-gaap:NetCashProvidedByUsedInOperatingActivities"
+
         # getting the link of the XBRL file 
         if (latest == False) :
             link = sf.get_prev_xbrl_link(sf.get_cik(company))
@@ -38,9 +41,11 @@ def get_roa(company, latest=True):
             xbrl_year_end = str(xbrl_file.find(name = re.compile('dei:DocumentPeriodEndDate', re.IGNORECASE | re.MULTILINE)).text)
         lperiod = sf.get_indicator_lperiod(xbrl_year_end, l_indicator, xbrl_file)
         rperiod = sf.get_indicator_lperiod(xbrl_year_end, r_indicator, xbrl_file)
+        fperiod = sf.get_indicator_lperiod(xbrl_year_end, net_cash_flow_indicator, xbrl_file)
 
         assets = sf.get_num_indicator(l_indicator, lperiod, xbrl_file)
         revenues = sf.get_num_indicator(r_indicator, rperiod, xbrl_file)
+        net_cash_flow = sf.get_num_indicator(net_cash_flow_indicator, fperiod, xbrl_file)
         # print("revenues: ", revenues)
         if revenues == None: 
             revenues = sf.get_num_indicator(err_indicator, sf.get_indicator_lperiod(xbrl_year_end, err_indicator, xbrl_file), xbrl_file)
@@ -53,7 +58,13 @@ def get_roa(company, latest=True):
             # print('assets:  ', assets)
             revenues = re.search(find, revenues).group(0)
             # print('revenues:  ', revenues)
-        return (company, assets, revenues, int(assets)/int(revenues), latest)
+        return (
+                company,                    # 0
+                assets,                     # 1          
+                revenues,                   # 2 
+                net_cash_flow,              # 3 
+                int(assets)/int(revenues),  # 4 
+                latest)                     # 5
     except : 
         print (str(company) + ": ERROR")
         return ('Company not found', 0, 0, 0, False)
@@ -61,21 +72,23 @@ def get_roa(company, latest=True):
 #############################################################################################################
 ################################################# Testing ###################################################
 #############################################################################################################
-symbol = 'PFE'
+symbol = 'MSFT'
 
 tupple = get_roa(symbol)
 print('Company: ', tupple[0])
 print('Assets: ', tupple[1])
 print('Revenues: ', tupple[2])
-print('ROA: ', tupple[3])
-print('latest: ', tupple[4])
+print('Net Cash Flow: ', tupple[3])
+print('ROA: ', tupple[4])
+print('latest: ', tupple[5])
 print('Latest is False here')
 tupple = get_roa(symbol, latest=False)
 print('Company: ', tupple[0])
 print('Assets: ', tupple[1])
 print('Revenues: ', tupple[2])
-print('ROA: ', tupple[3])
-print('latest: ', tupple[4])
+print('Net Cash Flow: ', tupple[3])
+print('ROA: ', tupple[4])
+print('latest: ', tupple[5])
 
 
 
