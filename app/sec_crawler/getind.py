@@ -16,9 +16,7 @@ def get_roa(company, latest=True):
         Returns:  the Return of Assets Indicator of a company
         This function is to be used as a template for any other functions
     """
-    try : 
-        # checking for the latest parameter
-     
+    try :    
         # total liabilities encoding (bear in mind Total Liabilities == Total Assets)
         l_indicator = "us-gaap:LiabilitiesAndStockholdersEquity"
         # net income encoding 
@@ -27,6 +25,7 @@ def get_roa(company, latest=True):
         err_indicator = "us-gaap:NetIncomeLoss"
         # net cash flow encoding 
         net_cash_flow_indicator = "us-gaap:NetCashProvidedByUsedInOperatingActivities"
+        long_debt_term_indicator = "us-gaap:LongTermDebtNoncurrent"
 
         # getting the link of the XBRL file 
         if (latest == False) :
@@ -42,10 +41,14 @@ def get_roa(company, latest=True):
         lperiod = sf.get_indicator_lperiod(xbrl_year_end, l_indicator, xbrl_file)
         rperiod = sf.get_indicator_lperiod(xbrl_year_end, r_indicator, xbrl_file)
         fperiod = sf.get_indicator_lperiod(xbrl_year_end, net_cash_flow_indicator, xbrl_file)
+        print("lperiod: ", lperiod)
+        print("rperiod: ", rperiod)
+        print("fperiod: ", fperiod)
 
         assets = sf.get_num_indicator(l_indicator, lperiod, xbrl_file)
         revenues = sf.get_num_indicator(r_indicator, rperiod, xbrl_file)
         net_cash_flow = sf.get_num_indicator(net_cash_flow_indicator, fperiod, xbrl_file)
+        long_debt_term = sf.get_num_indicator(long_debt_term_indicator, lperiod, xbrl_file)
         # print("revenues: ", revenues)
         if revenues == None: 
             revenues = sf.get_num_indicator(err_indicator, sf.get_indicator_lperiod(xbrl_year_end, err_indicator, xbrl_file), xbrl_file)
@@ -64,7 +67,8 @@ def get_roa(company, latest=True):
                 revenues,                   # 2 
                 net_cash_flow,              # 3 
                 int(assets)/int(revenues),  # 4 
-                latest)                     # 5
+                long_debt_term,             # 5
+                latest)                     # 6
     except : 
         print (str(company) + ": ERROR")
         return ('Company not found', 0, 0, 0, False)
@@ -72,7 +76,7 @@ def get_roa(company, latest=True):
 #############################################################################################################
 ################################################# Testing ###################################################
 #############################################################################################################
-symbol = 'MSFT'
+symbol = 'PFE'
 
 tupple = get_roa(symbol)
 print('Company: ', tupple[0])
@@ -80,7 +84,8 @@ print('Assets: ', tupple[1])
 print('Revenues: ', tupple[2])
 print('Net Cash Flow: ', tupple[3])
 print('ROA: ', tupple[4])
-print('latest: ', tupple[5])
+print('Long Term Debt', tupple[5])
+print('latest: ', tupple[6])
 print('Latest is False here')
 tupple = get_roa(symbol, latest=False)
 print('Company: ', tupple[0])
@@ -88,7 +93,8 @@ print('Assets: ', tupple[1])
 print('Revenues: ', tupple[2])
 print('Net Cash Flow: ', tupple[3])
 print('ROA: ', tupple[4])
-print('latest: ', tupple[5])
+print('Long Term Debt', tupple[5])
+print('latest: ', tupple[6])
 
 
 
