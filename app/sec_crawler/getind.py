@@ -26,10 +26,12 @@ def get_roa(company, latest=True):
         # net cash flow encoding 
         net_cash_flow_indicator = "us-gaap:NetCashProvidedByUsedInOperatingActivities"
         long_debt_term_indicator = "us-gaap:LongTermDebtNoncurrent"
-
+        current_assets_indicator =  "us-gaap:AssetsCurrent"
+        current_liabilities_indicator = "us-gaap:LiabilitiesCurrent"
+        print('Latest is FALSE', latest)
         # getting the link of the XBRL file 
         if (latest == False) :
-            link = sf.get_prev_xbrl_link(sf.get_cik(company))
+            link = sf.get_prev_xbrl_link(sf.get_cik(company))           
         else: 
             link = sf.get_xbrl_link(sf.get_cik(company))
         
@@ -41,14 +43,13 @@ def get_roa(company, latest=True):
         lperiod = sf.get_indicator_lperiod(xbrl_year_end, l_indicator, xbrl_file)
         rperiod = sf.get_indicator_lperiod(xbrl_year_end, r_indicator, xbrl_file)
         fperiod = sf.get_indicator_lperiod(xbrl_year_end, net_cash_flow_indicator, xbrl_file)
-        print("lperiod: ", lperiod)
-        print("rperiod: ", rperiod)
-        print("fperiod: ", fperiod)
-
+       
         assets = sf.get_num_indicator(l_indicator, lperiod, xbrl_file)
         revenues = sf.get_num_indicator(r_indicator, rperiod, xbrl_file)
         net_cash_flow = sf.get_num_indicator(net_cash_flow_indicator, fperiod, xbrl_file)
         long_debt_term = sf.get_num_indicator(long_debt_term_indicator, lperiod, xbrl_file)
+        current_assets = sf.get_num_indicator(current_assets_indicator, lperiod, xbrl_file)
+        current_liabilities = sf.get_num_indicator(current_liabilities_indicator, lperiod, xbrl_file)
         # print("revenues: ", revenues)
         if revenues == None: 
             revenues = sf.get_num_indicator(err_indicator, sf.get_indicator_lperiod(xbrl_year_end, err_indicator, xbrl_file), xbrl_file)
@@ -68,7 +69,9 @@ def get_roa(company, latest=True):
                 net_cash_flow,              # 3 
                 int(assets)/int(revenues),  # 4 
                 long_debt_term,             # 5
-                latest)                     # 6
+                current_liabilities,        # 6
+                current_assets,             # 7
+                latest)                     # 8
     except : 
         print (str(company) + ": ERROR")
         return ('Company not found', 0, 0, 0, False)
@@ -85,7 +88,9 @@ print('Revenues: ', tupple[2])
 print('Net Cash Flow: ', tupple[3])
 print('ROA: ', tupple[4])
 print('Long Term Debt', tupple[5])
-print('latest: ', tupple[6])
+print('Current Liabilities', tupple[6])
+print('Current Assets', tupple[7])
+print('latest: ', tupple[8])
 print('Latest is False here')
 tupple = get_roa(symbol, latest=False)
 print('Company: ', tupple[0])
@@ -94,13 +99,9 @@ print('Revenues: ', tupple[2])
 print('Net Cash Flow: ', tupple[3])
 print('ROA: ', tupple[4])
 print('Long Term Debt', tupple[5])
-print('latest: ', tupple[6])
-
-
-
-
-
-
+print('Current Liabilities', tupple[6])
+print('Current Assets', tupple[7])
+print('latest: ', tupple[8])
 
 if __name__ == "__main___": 
     pass
