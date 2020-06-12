@@ -118,6 +118,7 @@ def get_indicator_lperiod(year_end, indicator, xbrl_file):
         ref_id_tag = xbrl_file.find(name = re.compile('context', re.IGNORECASE | re.MULTILINE), id = str(value.attrs['contextref']))
         re_end = re.search(year_end, str(ref_id_tag))
         if re_end:
+            print(ref_id_tag.get('id'))
             return ref_id_tag.get('id')
 
 
@@ -126,6 +127,13 @@ def get_num_indicator(ind_name, ind_lperiod, xbrl_file):
     try: 
         num = xbrl_file.find(name = re.compile(ind_name, re.IGNORECASE | re.MULTILINE), 
                 contextref = ind_lperiod)
+        return num.text
+    except: 
+        return None
+
+def get_num_indicator_shares(ind_name, xbrl_file):
+    try: 
+        num = xbrl_file.find(name = re.compile(ind_name, re.IGNORECASE | re.MULTILINE))
         return num.text
     except: 
         return None
