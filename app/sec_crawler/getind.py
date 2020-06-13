@@ -29,7 +29,8 @@ def get_roa(company, latest=True):
         current_assets_indicator =  "us-gaap:AssetsCurrent"
         current_liabilities_indicator = "us-gaap:LiabilitiesCurrent"
         number_of_shares_indicator = "dei:EntityCommonStockSharesOutstanding"
-        print('Latest is FALSE', latest)
+        cogs_indicator = "us-gaap:CostOfGoodsAndServicesSold"
+        # print('Latest is FALSE', latest)
         # getting the link of the XBRL file 
         if (latest == False) :
             link = sf.get_prev_xbrl_link(sf.get_cik(company))           
@@ -52,7 +53,9 @@ def get_roa(company, latest=True):
         long_debt_term = sf.get_num_indicator(long_debt_term_indicator, lperiod, xbrl_file)
         current_assets = sf.get_num_indicator(current_assets_indicator, lperiod, xbrl_file)
         current_liabilities = sf.get_num_indicator(current_liabilities_indicator, lperiod, xbrl_file)
-        number_of_shares = sf.get_num_indicator_shares(number_of_shares_indicator, xbrl_file)
+        number_of_shares = sf.get_num_no_period(number_of_shares_indicator, xbrl_file)
+        cogs = sf.get_num_no_period(cogs_indicator, xbrl_file)
+
 
         # print("revenues: ", revenues)
         if revenues == None: 
@@ -76,7 +79,8 @@ def get_roa(company, latest=True):
                 current_liabilities,        # 6
                 current_assets,             # 7
                 number_of_shares,           # 8
-                latest)                     # 9
+                cogs,                       # 9
+                latest)                     # 10
     except : 
         print (str(company) + ": ERROR")
         return ('Company not found', 0, 0, 0, False)
@@ -96,7 +100,8 @@ print('Long Term Debt', tupple[5])
 print('Current Liabilities', tupple[6])
 print('Current Assets', tupple[7])
 print('Number of Shares: ', tupple[8])
-print('latest: ', tupple[9])
+print('COGS: ', tupple[9])
+print('latest: ', tupple[10])
 print('Latest is False here')
 tupple = get_roa(symbol, latest=False)
 print('Company: ', tupple[0])
@@ -108,7 +113,8 @@ print('Long Term Debt', tupple[5])
 print('Current Liabilities', tupple[6])
 print('Current Assets', tupple[7])
 print('Number of Shares: ', tupple[8])
-print('latest: ', tupple[9])
+print('COGS: ', tupple[9])
+print('latest: ', tupple[10])
 
 if __name__ == "__main___": 
     pass

@@ -131,7 +131,7 @@ def get_num_indicator(ind_name, ind_lperiod, xbrl_file):
     except: 
         return None
 
-def get_num_indicator_shares(ind_name, xbrl_file):
+def get_num_no_period(ind_name, xbrl_file):
     try: 
         num = xbrl_file.find(name = re.compile(ind_name, re.IGNORECASE | re.MULTILINE))
         return num.text
