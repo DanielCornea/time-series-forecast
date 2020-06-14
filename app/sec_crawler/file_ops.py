@@ -1,11 +1,11 @@
-f = open("Errors.txt", "r")
 
-with open("Errors.txt", "r") as f: 
-    ls = f.readlines()
+import json
+def print_error(company) :
+    with open("erros.txt", "a") as myfile:
+        myfile.write(company)
+    myfile.close()
 
-f.close()
-ls = [x.strip() for x in ls]
-ls = filter(bool, ls)
-ls = list(ls)
-
-print(len(ls))
+def append_company_json(dict):
+    with open("piotrosky_score.txt", "a") as myfile:
+        myfile.write(json.dumps(dict))
+    myfile.close()

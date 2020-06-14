@@ -3,6 +3,8 @@ import secform as sf
 import datetime
 import getsp as sp 
 import re
+import time
+import file_ops as fops
 
 
 def get_prev_assets(company):
@@ -23,7 +25,7 @@ def get_prev_assets(company):
 
     except :
         print("No puedo compilar!")
-        pass
+        return 0
 
 
 def get_roa(company, latest=True):
@@ -51,10 +53,11 @@ def get_roa(company, latest=True):
         cogs_indicator = "us-gaap:CostOfGoodsAndServicesSold"
         # print('Latest is FALSE', latest)
         # getting the link of the XBRL file 
+        cik = sf.get_cik(company)
         if (latest == False) :
-            link = sf.get_prev_xbrl_link(sf.get_cik(company))           
+            link = sf.get_prev_xbrl_link(cik)           
         else: 
-            link = sf.get_xbrl_link(sf.get_cik(company))
+            link = sf.get_xbrl_link(cik)
         
         xbrl_file = sf.get_xbrl_file(link)
         xbrl_year_end = sf.get_sec_year_end(xbrl_file)
@@ -93,49 +96,54 @@ def get_roa(company, latest=True):
                 assets,                     # 1          
                 revenues,                   # 2 
                 net_cash_flow,              # 3 
-                int(assets)/int(revenues),  # 4 
-                long_debt_term,             # 5
-                current_liabilities,        # 6
-                current_assets,             # 7
-                number_of_shares,           # 8
-                cogs,                       # 9
-                latest)                     # 10
+                long_debt_term,             # 4
+                current_liabilities,        # 5
+                current_assets,             # 6
+                number_of_shares,           # 7
+                cogs,                       # 8
+                cik)                        # 9
     except : 
-        print (str(company) + ": ERROR")
-        return ('Company not found', 0, 0, 0, False)
+        return 0
+def build_dict(company):
+    try:
+        inds = get_roa(company)
+        prev_inds = get_roa(company, latest=False)
+        dict = {
+            'company'               : inds[0], 
+            'assets'                : inds[1],
+            'revenues'              : inds[2],
+            'net_cash_flow'         : inds[3],
+            'long_debt_term'        : inds[4],   
+            'current_liabilities'   : inds[5], 
+            'current_assets'        : inds[6],
+            'number_of_shares'      : inds[7],
+            'cogs'                  : inds[8],
+            'prev_assets'           : prev_inds[1],
+            'prev_revenues'         : prev_inds[2],
+            'prev_net_cash_flow'    : prev_inds[3], 
+            'prev_long_debt_term'   : prev_inds[4], 
+            'prev_current_liabilities'  : prev_inds[5], 
+            'prev_current_assets'       : prev_inds[6], 
+            'number_of_shares'          : prev_inds[7], 
+            'prev_cogs'                 : prev_inds[8],
+            'prev_prev_assets'          : get_prev_assets(company)
+        }
+
+        return {inds[9] : dict}
+    except : 
+        fops.print_error(company)
+        return company
 
 #############################################################################################################
 ################################################# Testing ###################################################
 #############################################################################################################
-symbol = 'MSFT'
+symbol = 'DIS'
 
-# tupple = get_roa(symbol)
-# print('Company: ', tupple[0])
-# print('Assets: ', tupple[1])
-# print('Revenues: ', tupple[2])
-# print('Net Cash Flow: ', tupple[3])
-# print('ROA: ', tupple[4])
-# print('Long Term Debt', tupple[5])
-# print('Current Liabilities', tupple[6])
-# print('Current Assets', tupple[7])
-# print('Number of Shares: ', tupple[8])
-# print('COGS: ', tupple[9])
-# print('latest: ', tupple[10])
-# print('Latest is False here')
-# tupple = get_roa(symbol, latest=False)
-# print('Company: ', tupple[0])
-# print('Assets: ', tupple[1])
-# print('Revenues: ', tupple[2])
-# print('Net Cash Flow: ', tupple[3])
-# print('ROA: ', tupple[4])
-# print('Long Term Debt', tupple[5])
-# print('Current Liabilities', tupple[6])
-# print('Current Assets', tupple[7])
-# print('Number of Shares: ', tupple[8])
-# print('COGS: ', tupple[9])
-# print('latest: ', tupple[10])
-print(get_prev_assets(company=symbol))
-
+start_time = time.time()
+dict1 = build_dict(company=symbol)
+print(dict1)
+fops.append_company_json(dict1)
+print("--- %s seconds ---" % (time.time() - start_time))
 if __name__ == "__main___": 
     pass
 

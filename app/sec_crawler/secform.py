@@ -121,7 +121,6 @@ def get_indicator_lperiod(year_end, indicator, xbrl_file):
         ref_id_tag = xbrl_file.find(name = re.compile('context', re.IGNORECASE | re.MULTILINE), id = str(value.attrs['contextref']))
         re_end = re.search(year_end, str(ref_id_tag))
         if re_end:
-            print(ref_id_tag.get('id'))
             return ref_id_tag.get('id')
 
 
