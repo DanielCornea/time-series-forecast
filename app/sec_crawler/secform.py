@@ -77,7 +77,7 @@ def get_xbrl_link(CIK):
     except: 
         get_error_link(CIK)
 
-def get_prev_xbrl_link(CIK): 
+def get_prev_xbrl_link(CIK, level=1): 
     # get the first xml foud, in case the first xml is not good get the one with the indicator 
     try :
         # get the first search page link 
@@ -87,8 +87,11 @@ def get_prev_xbrl_link(CIK):
         soup = BeautifulSoup(requests.get(URL_search.format(CIK)).text, 'html.parser')
 
         # get the second link 
-            # get the link for the xbrl file 
-        URL_search = 'https://www.sec.gov' + soup.find_all(text = "10-K")[1].parent.find_next('a')['href']
+            # get the link for the xbrl file
+        if level == 2 :
+            URL_search = 'https://www.sec.gov' + soup.find_all(text = "10-K")[2].parent.find_next('a')['href']
+        else :
+            URL_search = 'https://www.sec.gov' + soup.find_all(text = "10-K")[1].parent.find_next('a')['href']
         soup = BeautifulSoup(requests.get(URL_search).text, 'html.parser')
         table  = soup.find_all("a", {"href": re.compile('.xml', re.IGNORECASE | re.MULTILINE)})
         return('https://www.sec.gov' + table[0]['href'])

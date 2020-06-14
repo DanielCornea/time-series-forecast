@@ -5,6 +5,25 @@ import getsp as sp
 import re
 
 
+def get_prev_assets(company):
+    try:
+        l_indicator = "us-gaap:LiabilitiesAndStockholdersEquity"
+        link = sf.get_prev_xbrl_link(sf.get_cik(company), level = 2)           
+        xbrl_file = sf.get_xbrl_file(link)
+        xbrl_year_end = sf.get_sec_year_end(xbrl_file)
+        if (xbrl_year_end == None): 
+            xbrl_file = sf.get_xbrl_file(sf.get_error_link(sf.get_cik(company)))
+            xbrl_year_end = str(xbrl_file.find(name = re.compile('dei:DocumentPeriodEndDate', re.IGNORECASE | re.MULTILINE)).text)
+
+        lperiod = sf.get_indicator_lperiod(xbrl_year_end, l_indicator, xbrl_file)
+        assets = sf.get_num_indicator(l_indicator, lperiod, xbrl_file)
+        return assets
+
+
+
+    except :
+        print("No puedo compilar!")
+        pass
 
 
 def get_roa(company, latest=True):
@@ -90,31 +109,32 @@ def get_roa(company, latest=True):
 #############################################################################################################
 symbol = 'MSFT'
 
-tupple = get_roa(symbol)
-print('Company: ', tupple[0])
-print('Assets: ', tupple[1])
-print('Revenues: ', tupple[2])
-print('Net Cash Flow: ', tupple[3])
-print('ROA: ', tupple[4])
-print('Long Term Debt', tupple[5])
-print('Current Liabilities', tupple[6])
-print('Current Assets', tupple[7])
-print('Number of Shares: ', tupple[8])
-print('COGS: ', tupple[9])
-print('latest: ', tupple[10])
-print('Latest is False here')
-tupple = get_roa(symbol, latest=False)
-print('Company: ', tupple[0])
-print('Assets: ', tupple[1])
-print('Revenues: ', tupple[2])
-print('Net Cash Flow: ', tupple[3])
-print('ROA: ', tupple[4])
-print('Long Term Debt', tupple[5])
-print('Current Liabilities', tupple[6])
-print('Current Assets', tupple[7])
-print('Number of Shares: ', tupple[8])
-print('COGS: ', tupple[9])
-print('latest: ', tupple[10])
+# tupple = get_roa(symbol)
+# print('Company: ', tupple[0])
+# print('Assets: ', tupple[1])
+# print('Revenues: ', tupple[2])
+# print('Net Cash Flow: ', tupple[3])
+# print('ROA: ', tupple[4])
+# print('Long Term Debt', tupple[5])
+# print('Current Liabilities', tupple[6])
+# print('Current Assets', tupple[7])
+# print('Number of Shares: ', tupple[8])
+# print('COGS: ', tupple[9])
+# print('latest: ', tupple[10])
+# print('Latest is False here')
+# tupple = get_roa(symbol, latest=False)
+# print('Company: ', tupple[0])
+# print('Assets: ', tupple[1])
+# print('Revenues: ', tupple[2])
+# print('Net Cash Flow: ', tupple[3])
+# print('ROA: ', tupple[4])
+# print('Long Term Debt', tupple[5])
+# print('Current Liabilities', tupple[6])
+# print('Current Assets', tupple[7])
+# print('Number of Shares: ', tupple[8])
+# print('COGS: ', tupple[9])
+# print('latest: ', tupple[10])
+print(get_prev_assets(company=symbol))
 
 if __name__ == "__main___": 
     pass
