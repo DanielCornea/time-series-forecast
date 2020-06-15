@@ -8,4 +8,5 @@ def print_error(company) :
 def append_company_json(dict):
     with open("piotrosky_score.txt", "a") as myfile:
         myfile.write(json.dumps(dict))
+        myfile.write('\n')
     myfile.close()
