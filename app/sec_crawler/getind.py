@@ -108,7 +108,7 @@ def build_dict(company):
     try:
         inds = get_roa(company)
         prev_inds = get_roa(company, latest=False)
-        dict = {
+        dict1 = {
             'company'               : inds[0], 
             'assets'                : inds[1],
             'revenues'              : inds[2],
@@ -129,21 +129,20 @@ def build_dict(company):
             'prev_prev_assets'          : get_prev_assets(company)
         }
 
-        return {inds[9] : dict}
+        return {inds[9] : dict1}
     except : 
-        fops.print_error(company)
-        return company
+        return "not_found"
 
 #############################################################################################################
 ################################################# Testing ###################################################
 #############################################################################################################
-symbol = 'DIS'
+# symbol = 'DIS'
 
-start_time = time.time()
-dict1 = build_dict(company=symbol)
-print(dict1)
-fops.append_company_json(dict1)
-print("--- %s seconds ---" % (time.time() - start_time))
+# start_time = time.time()
+# dict1 = build_dict(company=symbol)
+# print(dict1)
+# fops.append_company_json(dict1)
+# print("--- %s seconds ---" % (time.time() - start_time))
 if __name__ == "__main___": 
     pass
 
