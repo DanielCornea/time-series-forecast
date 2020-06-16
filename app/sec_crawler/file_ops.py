@@ -10,3 +10,8 @@ def append_company_json(dict):
         myfile.write(json.dumps(dict))
         myfile.write('\n')
     myfile.close()
+
+def read_json_file(file_json):
+    with open(file_json) as f:
+        data = json.load(f)
+    return data

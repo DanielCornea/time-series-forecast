@@ -11,7 +11,6 @@ for company in companies:
     
     dict_comp  = gi.build_dict(company)
     if (dict_comp == "not_found"):
-        print('here')
         fops.print_error(company)
     else: 
         fops.append_company_json(dict_comp)

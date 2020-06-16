@@ -129,7 +129,7 @@ def build_dict(company):
             'prev_prev_assets'          : get_prev_assets(company)
         }
 
-        return {inds[9] : dict1}
+        return  dict1
     except : 
         return "not_found"
 
