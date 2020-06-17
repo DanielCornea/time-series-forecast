@@ -50,7 +50,7 @@ def get_roa(company, latest=True):
         current_assets_indicator =  "us-gaap:AssetsCurrent"
         current_liabilities_indicator = "us-gaap:LiabilitiesCurrent"
         number_of_shares_indicator = "dei:EntityCommonStockSharesOutstanding"
-        cogs_indicator = "us-gaap:CostOfGoodsAndServicesSold"
+        cogs_indicator = "CostOfGoodsAndServicesSold"
         # print('Latest is FALSE', latest)
         # getting the link of the XBRL file 
         cik = sf.get_cik(company)
