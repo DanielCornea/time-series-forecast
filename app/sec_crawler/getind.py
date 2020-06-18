@@ -46,11 +46,12 @@ def get_roa(company, latest=True):
         err_indicator = "us-gaap:NetIncomeLoss"
         # net cash flow encoding 
         net_cash_flow_indicator = "us-gaap:NetCashProvidedByUsedInOperatingActivities"
-        long_debt_term_indicator = "us-gaap:LongTermDebtNoncurrent"
+        long_debt_term_indicator = "LongTermDebtNoncurrent"
         current_assets_indicator =  "us-gaap:AssetsCurrent"
         current_liabilities_indicator = "us-gaap:LiabilitiesCurrent"
         number_of_shares_indicator = "dei:EntityCommonStockSharesOutstanding"
         cogs_indicator = "CostOfGoodsAndServicesSold"
+        operating_income_indicator = 'OperatingIncomeLoss'
         # print('Latest is FALSE', latest)
         # getting the link of the XBRL file 
         cik = sf.get_cik(company)
@@ -77,6 +78,7 @@ def get_roa(company, latest=True):
         current_liabilities = sf.get_num_indicator(current_liabilities_indicator, lperiod, xbrl_file)
         number_of_shares = sf.get_num_no_period(number_of_shares_indicator, xbrl_file)
         cogs = sf.get_num_no_period(cogs_indicator, xbrl_file)
+        op_income = sf.get_num_no_period(operating_income_indicator, xbrl_file)
 
 
         # print("revenues: ", revenues)
@@ -100,8 +102,11 @@ def get_roa(company, latest=True):
                 current_liabilities,        # 5
                 current_assets,             # 6
                 number_of_shares,           # 7
-                cogs,                       # 8
-                cik)                        # 9
+                cogs,                       # 8                   
+                cik,                        # 9
+                op_income                   #10
+        )
+
     except : 
         return 0
 def build_dict(company):
@@ -118,6 +123,7 @@ def build_dict(company):
             'current_assets'        : inds[6],
             'number_of_shares'      : inds[7],
             'cogs'                  : inds[8],
+            'op_income'             : inds[9],
             'prev_assets'           : prev_inds[1],
             'prev_revenues'         : prev_inds[2],
             'prev_net_cash_flow'    : prev_inds[3], 
@@ -126,7 +132,8 @@ def build_dict(company):
             'prev_current_assets'       : prev_inds[6], 
             'number_of_shares'          : prev_inds[7], 
             'prev_cogs'                 : prev_inds[8],
-            'prev_prev_assets'          : get_prev_assets(company)
+            'prev_prev_assets'          : get_prev_assets(company),
+            'prev_op_income'             : prev_inds[9],
         }
 
         return  dict1
