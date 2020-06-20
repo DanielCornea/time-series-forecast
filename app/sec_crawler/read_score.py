@@ -19,5 +19,5 @@ df = pd.DataFrame.from_dict(dict_final, orient='index')
 df.columns = [  'company',
                 'assets',  'revenues', 'net_cash_flow', 'long_debt_term','current_liabilities',  'current_assets','number_of_shares','cogs','op_income',
                 'prev_assets','prev_revenues','prev_net_cash_flow','prev_long_debt_term','prev_current_liabilities','prev_current_assets','prev_cogs','prev_prev_assets','prev_op_income']
-df.to_csv('piotroski.csv')
+df.to_csv('../../research/piotroski.csv')
  

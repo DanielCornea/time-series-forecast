@@ -1,0 +1,5 @@
+name: timeseries
+channels:
+  - defaults
+prefix: C:\Users\danok\anaconda3\envs\timeseries\envs\timeseries
+
